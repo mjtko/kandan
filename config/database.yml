@@ -18,3 +18,12 @@ test:
   database: db/test.sqlite3
   pool: 5
   timeout: 5000
+
+production:
+  adapter: mysql2
+  host: localhost
+  database: kandan
+  pool: 5
+  timeout: 5000
+  username: <%= ENV['KANDAN_DBMS_USER'] %>
+  password: <%= ENV['KANDAN_DBMS_PASSWORD'] %>

@@ -4,7 +4,11 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.11'
 
 # Database adapters
-gem 'pg'
+if ENV['KANDAN_DBMS'] == 'mysql'
+  gem 'mysql2'
+else
+  gem 'pg'
+end
 
 # Auth/Cloudfuji gems
 gem 'devise'
