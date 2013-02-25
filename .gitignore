@@ -31,3 +31,6 @@ DS_Store
 /tmp
 
 public/system/*
+
+vendor/ruby
+vendor/bundler
