@@ -1,7 +1,7 @@
 class Kandan.Plugins.Emoticons
 
   @options:
-    regex: /\([a-zA-Z]+\)|(:[a-z]+:)|(^|\s)+([:|=][\)|\(|P|p])($|\s)/g
+    regex: /\([a-zA-Z]+\)|(:[-+a-z_0-9]+:)|(^|\s)+([>]?[;:|=][-^']?[\)|\(|P|p\]\[])($|\s)/g
     template: _.template '''
       <img class="emoticon-embed <%= css %>" src="/assets/emoticons/<%= src %>" title="<%= title %>" />
     '''
@@ -30,11 +30,20 @@ class Kandan.Plugins.Emoticons
     "(truestory)"   : { src : "truestory.png", css : "big", title : "truestory"},
     "(youdontsay)"  : { src : "youdontsay.png", css : "big", title : "youdontsay"},
     "(yuno)"        : { src : "yuno.jpg", css : "big", title : "yuno"},
-    ":("            : { src : "sad.png", css : "small", title : "sad"},
-    "=("            : { src : "sad.png", css : "small", title : "sad"},
-    ":)"            : { src : "happy.png", css : "small", title : "happy"},
-    "=)"            : { src : "happy.png", css : "small", title : "happy"},
+    ":("            : { src : "sad.png", css : "small", title : ":("},
+    ":-("           : { src : "sad.png", css : "small", title : ":-("},
+    "=("            : { src : "sad.png", css : "small", title : "=("},
+    "=["            : { src : "sad.png", css : "small", title : "=["},
+    ":'("           : { src : "cry.png", css : "small", title : ":'("},
+    ":)"            : { src : "happy.png", css : "small", title : ":)"},
+    "=]"            : { src : "happy.png", css : "small", title : "=]"},
+    ":-)"           : { src : "happy.png", css : "small", title : ":-)"},
+    ";)"            : { src : "emojis/wink.png", css : "small", title : ";)"},
+    ";]"            : { src : "emojis/wink.png", css : "small", title : ";]"},
+    ";-)"           : { src : "emojis/wink.png", css : "small", title : ";-)"},
+    ":^)"           : { src : "emojis/smirk.png", css : "small", title : ":^)"},
     ":p"            : { src : "tongue.png", css : "small", title : ":p"},
+    ":-p"           : { src : "tongue.png", css : "small", title : ":p"},
     "=p"            : { src : "tongue.png", css : "small", title : "=p"},
     ":bowtie:"      : { src : "emojis/bowtie.png", css : "small", title : "bowtie"},
     ":smile:"       : { src : "emojis/smile.png", css : "small", title : "smile"},
@@ -911,11 +920,11 @@ class Kandan.Plugins.Emoticons
       for match in _.unique(matches)
         match = match.trim();
         emoticon    = @emoticons[match]
-        
+
         if emoticon
             needle = match.replace('(', '\\(').replace(')', '\\)')
             search = new RegExp(needle, 'g')
             replacement = @options.template(emoticon)
-            message.content = message.content.replace(search, replacement) 
+            message.content = message.content.replace(search, replacement)
 
       return Kandan.Helpers.Activities.buildFromMessageTemplate(message)
