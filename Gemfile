@@ -24,7 +24,7 @@ gem 'jquery-rails'
 gem 'enumerize'
 
 # Making the world a better, more stable place
-gem 'airbrake'
+#gem 'airbrake'
 
 # Gems used only for assets and not required
 # in production environments by default.
