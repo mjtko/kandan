@@ -919,12 +919,9 @@ class Kandan.Plugins.Emoticons
       matches = message.content.match(@options.regex)
       for match in _.unique(matches)
         match = match.trim();
-        emoticon    = @emoticons[match]
+        emoticon = @emoticons[match]
 
         if emoticon
-            needle = match.replace('(', '\\(').replace(')', '\\)')
-            search = new RegExp(needle, 'g')
-            replacement = @options.template(emoticon)
-            message.content = message.content.replace(search, replacement)
+            message.content = message.content.replace(match, @options.template(emoticon))
 
       return Kandan.Helpers.Activities.buildFromMessageTemplate(message)
