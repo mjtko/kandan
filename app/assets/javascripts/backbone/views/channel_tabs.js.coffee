@@ -31,7 +31,8 @@ class Kandan.Views.ChannelTabs extends Backbone.View
       channel = new Kandan.Models.Channel({name: channelName})
       channel.save({}, {
         success: (model)->
-          Kandan.Helpers.Channels.createChannelArea(model)
+          # we don't need to create the channel area as that will happen via a message from the server.
+          #Kandan.Helpers.Channels.createChannelArea(model)
 
         error: (model, response)->
           _.each(JSON.parse(response.responseText), alert);

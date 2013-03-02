@@ -20,8 +20,10 @@ Kandan::Application.routes.draw do
   end
 
   get "/active_users" => "apis#active_users"
-  
+  get "/me" => "apis#me"
+ 
   get "/users/edit" =>"main#users_edit"
+#  get "/users/show" =>"main#users_show"
 
   namespace :admin do
     root :to => "admin#index"
