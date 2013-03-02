@@ -13,7 +13,7 @@ class Kandan.Plugins.Notifications
   @disable_sound_notifications_template = _.template '<a class="btn disable-sound-notifications" href="#"><i class="icon-check"></i> Sounds</a>'
 
   @fluid_notifications_template: _.template '<div class="notification fluid-notifications"></div>'
-  @enable_flud_notifications_template = _.template '<a class="btn enable-fluid-notifications" href="#"><i class="icon-check-empty"></i> Fluid notifications</a>'
+  @enable_fluid_notifications_template = _.template '<a class="btn enable-fluid-notifications" href="#"><i class="icon-check-empty"></i> Fluid notifications</a>'
   @disable_fluid_notifications_template = _.template '<a class="btn disable-fluid-notifications" href="#"><i class="icon-check"></i> Fluid notifications</a>'
 
   @render: ($el)->

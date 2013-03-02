@@ -10,14 +10,11 @@ else
   gem 'pg'
 end
 
-# Auth/Cloudfuji gems
+# Auth gems
 gem 'devise'
-gem 'devise_cloudfuji_authenticatable'
-gem 'cloudfuji'
 
 # Server/transport gems
 gem 'thin'
-gem '_bushido-faye', '0.8.2'
 
 # Helper gems
 gem 'kaminari'
@@ -26,9 +23,6 @@ gem 'paperclip'
 gem 'remotipart'
 gem 'jquery-rails'
 gem 'enumerize'
-
-# Making the world a better, more stable place
-#gem 'airbrake'
 
 # Gems used only for assets and not required
 # in production environments by default.
