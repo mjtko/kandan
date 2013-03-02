@@ -7,10 +7,6 @@ class ChannelObserver < ActiveRecord::Observer
     broadcast('create', channel)
   end
 
-  def after_update(channel)
-    broadcast('update', channel)
-  end
-
   private
   def broadcast(event, channel)
     data = {
