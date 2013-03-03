@@ -48,6 +48,7 @@ GEM
     bourne (1.1.2)
       mocha (= 0.10.5)
     builder (3.0.4)
+    cancan (1.6.9)
     childprocess (0.3.8)
       ffi (~> 1.0, >= 1.0.11)
     climate_control (0.0.3)
@@ -261,6 +262,7 @@ DEPENDENCIES
   binding_of_caller
   bootstrap-sass (~> 2.3.0.1)
   bourbon (~> 1.4.0)
+  cancan
   coffee-rails
   database_cleaner
   devise
