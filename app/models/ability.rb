@@ -17,8 +17,9 @@ class Ability
       # can [:read, :create], Activity
       # can :read, Attachment
       # can :manage, Attachment, :user => user
-      # can :manage, User, :id => user.id # can manage themselves
+      can :manage, User, :id => user.id # can manage themselves
     end
+    can :read, User
     # This goes last in order to override all other permissions.
     cannot :destroy, Channel, :id => 1
   end
