@@ -39,10 +39,13 @@ class Kandan.Views.Chatbox extends Backbone.View
       $("#activity-c#{model.cid}").attr("id", "activity-#{model.get('id')}")
       theId = Kandan.Helpers.Channels.getActiveChannelId()
       Kandan.Helpers.Channels.scrollToLatestMessage(theId)
-      
+
     })
 
   render: ()->
     @channel = @options.channel
     $(@el).html(@template())
+    $(@el).find('.chat-input').inputHistory {
+      size: 5
+    }
     @
