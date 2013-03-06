@@ -1,6 +1,9 @@
 Kandan - [Modern Open Source Chat](http://www.kandanapp.com)
 ================================
 [![Build Status](https://travis-ci.org/kandanapp/kandan.png?branch=master)](https://travis-ci.org/kandanapp/kandan)
+[![Coverage Status](https://coveralls.io/repos/kandanapp/kandan/badge.png?branch=master)](https://coveralls.io/r/kandanapp/kandan)
+[![Dependency Status](https://gemnasium.com/kandanapp/kandan.png)](https://gemnasium.com/kandanapp/kandan)
+[![Code Climate](https://codeclimate.com/github/kandanapp/kandan.png)](https://codeclimate.com/github/kandanapp/kandan)
 
 What is Kandan? Kandan is a private chat service for your company or team. You can invite colleagues to share ideas and files in a persistent group chat room or rooms.
 
@@ -19,7 +22,7 @@ These are features that work out of the box on any provider:
  * Synchronized sound player - play any audio-tag compatible url for the whole channel (Pending :P)
  * /me command!
  * Highly extensible plugin format
- * [Your very own robotic companion](https://github.com/cloudfuji/hubot-kandan-app)
+ * [Your very own robotic companion](https://github.com/kandanapp/hubot-kandan-app)
 
 Deployment
 ==========
