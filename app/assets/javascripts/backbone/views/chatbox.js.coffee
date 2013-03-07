@@ -11,7 +11,7 @@ class Kandan.Views.Chatbox extends Backbone.View
 
 
   postMessageOnEnter: (event)->
-    if event.keyCode == 13
+    if event.keyCode == 13 && !(event.metaKey || event.shiftKey || event.altKey || event.ctrlKey)
       @postMessage(event)
       event.preventDefault()
 
@@ -46,6 +46,6 @@ class Kandan.Views.Chatbox extends Backbone.View
     @channel = @options.channel
     $(@el).html(@template())
     $(@el).find('.chat-input').inputHistory {
-      size: 5
+      size: 20
     }
     @
