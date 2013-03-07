@@ -6,20 +6,29 @@ class Kandan.Plugins.Mentions
 
     template: _.template '''<span class="mention"><%= mention %></span>'''
 
+  @allUsers: []
+
   @init: ()->
-  	Kandan.Data.ActiveUsers.registerCallback "change", (data)=>
+    Kandan.Data.ActiveUsers.registerCallback "change", (data)=>
       @initUsersMentions(data.extra.active_users)
+
+    Kandan.Data.Users.registerCallback "change", (data)=>
+      @initAvailableUsers(data.extra.users)
 
     Kandan.Modifiers.register @options.regex, (message, state) =>
       for mention in message.content.match(@options.regex)
-      	replacement = @options.template({mention: mention})
-      	message.content = message.content.replace(mention, replacement)
+        if mention in @allUsers
+          replacement = @options.template({mention: mention})
+          message.content = message.content.replace(mention, replacement)
 
-      return Kandan.Helpers.Activities.buildFromMessageTemplate(message)	
-      
+      return Kandan.Helpers.Activities.buildFromMessageTemplate(message)
+
+  @initAvailableUsers: (users)=>
+    @allUsers =  ("@#{u.username}" for u in users)
+
   @initUsersMentions: (activeUsers)->
-  	users = _.map activeUsers, (user)->
-  		user.username
-  	users.push "all"
-  	$(".chat-input").atwho("@", {data: users})
-	return
+    users = _.map activeUsers, (user)->
+      user.username
+    users.push "all"
+    $(".chat-input").atwho("@", {data: users})
+    return
