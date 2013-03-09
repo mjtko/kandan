@@ -8,9 +8,7 @@
     <%= @activity.user.username || @activity.user.email %>
   </span>
 
-  <span class="content">
-    <%- @activity.content %>
-  </span>
+  <span class="content"><%- @activity.content %></span>
 
 </div>
 
