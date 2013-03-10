@@ -30,5 +30,5 @@ class Kandan.Plugins.Mentions
     users = _.map activeUsers, (user)->
       user.username
     users.push "all"
-    $(".chat-input").atwho("@", {data: users})
+    $(".chat-input").atwho("(?:^|\\s)@", {data: users})
     return
