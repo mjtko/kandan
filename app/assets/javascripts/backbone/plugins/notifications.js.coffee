@@ -1,7 +1,7 @@
 class Kandan.Plugins.Notifications
 
   @widget_title: "Notifications"
-  @widget_icon_url: "/assets/people_icon.png"
+  @widget_icon_url: "/assets/audio_icon.png"
   @pluginNamespace: "Kandan.Plugins.Notifications"
 
   @popup_notifications_template: _.template '<div class="notification popup-notifications"></div>'
