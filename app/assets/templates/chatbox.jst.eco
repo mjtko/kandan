@@ -1,2 +1,2 @@
 <textarea class="chat-input"></textarea>
-<button class="post">Post</button>
+<button class="post <%= @connectionStatus %>">Post <i class="icon-<%= @connectionIcon %>"></i></button>

@@ -1,7 +1,7 @@
 class Kandan.Broadcasters.FayeBroadcaster
 
   constructor: ()->
-    @fayeClient = new Faye.Client("/remote/faye")
+    @fayeClient = new Faye.Client "/remote/faye"
     @fayeClient.disable('websocket')
     authExtension = {
       outgoing: (message, callback)->
@@ -13,10 +13,12 @@ class Kandan.Broadcasters.FayeBroadcaster
     }
     @fayeClient.addExtension(authExtension)
 
-    @fayeClient.bind "transport:down", ()->
+    @fayeClient.bind "transport:down", =>
+      @processEventsForConnection('down')
       console.log "Comm link to Cybertron is down!"
 
-    @fayeClient.bind "transport:up", ()->
+    @fayeClient.bind "transport:up", =>
+      @processEventsForConnection('up')
       console.log "Comm link is up!"
 
     @fayeClient.subscribe "/app/activities", (data)=>
@@ -24,6 +26,10 @@ class Kandan.Broadcasters.FayeBroadcaster
       @processEventsForUser(eventName, data)        if entityName == "user"
       @processEventsForChannel(eventName, data)     if entityName == "channel"
       @processEventsForAttachments(eventName, data) if entityName == "attachments"
+
+  processEventsForConnection: (eventName) ->
+    Kandan.Helpers.Connection.setStatus(eventName)
+    Kandan.Data.Connection.runCallbacks("softchange")
 
   processEventsForAttachments: (eventName, data)->
     Kandan.Helpers.Channels.addActivity(data.entity, Kandan.Helpers.Activities.ACTIVE_STATE)

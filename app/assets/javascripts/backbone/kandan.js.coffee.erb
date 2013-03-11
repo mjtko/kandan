@@ -56,6 +56,9 @@ window.Kandan =
         action: data.event.split("#")[1]
       })
 
+    Kandan.Data.Connection.registerCallback "hardchange", Kandan.Views.Chatbox.updateChatStatus('hard')
+    Kandan.Data.Connection.registerCallback "softchange", Kandan.Views.Chatbox.updateChatStatus('soft')
+
     $(window).focus(->
       Kandan.Helpers.Utils.browserTabFocused = true
       Kandan.Helpers.Utils.resetUnreadActivities()
@@ -80,10 +83,10 @@ window.Kandan =
 
         $(document).data('active-channel-id',
           Kandan.Helpers.Channels.getChannelIdByTabIndex(ui.index))
-        
-        #the need for the delay feels hacky to me. 
+
+        #the need for the delay feels hacky to me.
         #It is there because the chat area has to render before scrollHeight can be determined.
-        theId = Kandan.Helpers.Channels.getActiveChannelId() 
+        theId = Kandan.Helpers.Channels.getActiveChannelId()
         delay = (ms, func) -> setTimeout func, ms
         delay 1, -> Kandan.Helpers.Channels.scrollToLatestMessage(theId)
         Kandan.Data.Channels.runCallbacks('change')

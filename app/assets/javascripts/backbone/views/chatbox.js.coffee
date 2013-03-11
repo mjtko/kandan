@@ -48,8 +48,30 @@ class Kandan.Views.Chatbox extends Backbone.View
 
   render: ()->
     @channel = @options.channel
-    $(@el).html(@template())
+    connectionStatus = Kandan.Helpers.Connection.getStatus()
+    if connectionStatus == 'down'
+      connectionIcon = 'minus-sign'
+    else
+      connectionIcon = 'bolt'
+    $(@el).html @template {
+      connectionStatus: connectionStatus
+      connectionIcon: connectionIcon
+    }
     $(@el).find('.chat-input').inputHistory {
       size: 20
     }
     @
+
+  @updateChatStatus: (eventName) ->
+    ->
+      $postButton = $('.chatbox .post')
+      if Kandan.Helpers.Connection.getStatus() == 'down'
+        if eventName == 'soft'
+          $postButton.html('Post <i class="icon-spinner icon-spin"></i>').
+            removeClass('up down').addClass('maybe-down')
+        else
+          $postButton.html('Post <i class="icon-minus-sign"></i>').
+          removeClass('maybe-down up').addClass('down')
+      else
+        $postButton.html('Post <i class="icon-bolt"></i>').
+          removeClass('maybe-down down').addClass('up')
