@@ -16,14 +16,8 @@ window.Kandan =
   Data:         {}
   Plugins:      {}
 
-  options:
-    broadcaster: "<%= Kandan::Config.options[:broadcaster][:name] %>"
-    perPage    : <%= Kandan::Config.options[:per_page] %>
-    nowThreshold: 3000
-    timestampRefreshInterval: 2000
-    avatarUrl: "<%= Kandan::Config.options[:avatar_url] %>"
-    avatarFallback: "<%= Kandan::Config.options[:avatar_fallback] %>"
-
+  options: ->
+    @_options ?= $('body').data('kandan-config')
 
   # TODO this is a helper method to register plugins
   # in the order required until we come up with plugin management
@@ -72,7 +66,7 @@ window.Kandan =
 
 
   initBroadcasterAndSubscribe: ()->
-    Kandan.broadcaster = eval "new Kandan.Broadcasters.#{@options.broadcaster}Broadcaster()"
+    Kandan.broadcaster = eval "new Kandan.Broadcasters.#{@options().broadcaster.name}Broadcaster()"
     Kandan.broadcaster.subscribe "/channels/*"
     @registerAppEvents()
 
@@ -134,8 +128,8 @@ window.Kandan =
   registerUtilityEvents: ()->
     window.setInterval(=>
       for el in $(".posted_at")
-        $(el).text (new Date($(el).data("timestamp"))).toRelativeTime(@options.nowThreshold)
-    , @options.timestampRefreshInterval)
+        $(el).text (new Date($(el).data("timestamp"))).toRelativeTime(@options().now_threshold)
+    , @options().timestamp_refresh_interval)
 
   init: ->
     initializer = @createCallback 3, =>
