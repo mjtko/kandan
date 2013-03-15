@@ -82,13 +82,6 @@ GEM
     daemons (1.1.9)
     database_cleaner (0.9.1)
     debug_inspector (0.0.2)
-    debugger (1.4.0)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.1.1)
-      debugger-ruby_core_source (~> 1.2.0)
-    debugger-linecache (1.1.2)
-      debugger-ruby_core_source (>= 1.1.1)
-    debugger-ruby_core_source (1.2.0)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -174,6 +167,7 @@ GEM
     mocha (0.10.5)
       metaclass (~> 0.0.1)
     multi_json (1.6.1)
+    mysql2 (0.3.11)
     nokogiri (1.5.6)
     orm_adapter (0.4.0)
     paperclip (3.4.1)
@@ -182,7 +176,6 @@ GEM
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.0)
       mime-types
-    pg (0.14.1)
     poltergeist (1.1.0)
       capybara (~> 2.0, >= 2.0.1)
       faye-websocket (~> 0.4, >= 0.4.4)
@@ -317,8 +310,8 @@ DEPENDENCIES
   kandan-count
   kandan-count-dev
   launchy
+  mysql2
   paperclip
-  pg
   poltergeist
   pry-rails
   quiet_assets
