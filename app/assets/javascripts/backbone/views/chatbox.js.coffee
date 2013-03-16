@@ -77,7 +77,7 @@ class Kandan.Views.Chatbox extends Backbone.View
       else
         console.log 'typing starts'
         Kandan.broadcaster.typingStarts()
-      @_keyPressTimer = setTimeout keyPressTimer, 2000
+      @_keyPressTimer = setTimeout keyPressTimer, 1000
     @
 
   @updateChatStatus: (eventName) ->

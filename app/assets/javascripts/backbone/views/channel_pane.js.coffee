@@ -9,7 +9,7 @@ class Kandan.Views.ChannelPane extends Backbone.View
     $li = $("a[href=#channels-#{@options.channel.get('id')}]").parent()
     if @options.channel.isDestroyable()
       $li.addClass 'destroyable'
-      $li.find('cite').after '<cite class="close_channel" title="close channel">x</cite>'
+      $li.find('cite').after '<cite class="close_channel" title="close channel"><i class="icon-remove-sign"></i></cite>'
     else
       $li.addClass 'protected'
     Kandan.Helpers.Audio.createAudioChannel(@options.channel.get('id'))

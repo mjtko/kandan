@@ -16,8 +16,8 @@ class Kandan.Plugins.UserList
         </div>
         <a href="#channel-<%= channelId %>" class="channel"><%= channelName %></a>
       </div>
-      <div class="status typing <%= typingStatus %>"></div>
-      <div class="status presence <%= presenceStatus %>"></div>
+      <div class="status typing <%= typingStatus %>"><i class="<%= typingIcon %>"></i></div>
+      <div class="status presence <%= presenceStatus %>"><i class="<%= presenceIcon %>"></i></div>
     </div>
   '''
 
@@ -40,27 +40,39 @@ class Kandan.Plugins.UserList
         when 'typing'
           presenceStatus = 'here'
           typingStatus = 'active'
+          presenceIcon = 'icon-circle'
+          typingIcon = 'icon-spin icon-spinner'
         when 'paused'
           presenceStatus = 'here'
+          presenceIcon = 'icon-circle'
           typingStatus = 'inactive'
+          typingIcon = 'icon-pause'
         when 'here'
           presenceStatus = 'here'
+          presenceIcon = 'icon-circle'
           typingStatus = 'inactive'
+          typingIcon = 'icon-pause'
         when 'blurred'
           presenceStatus = 'idle'
+          presenceIcon = 'icon-circle-blank'
           typingStatus = 'none'
+          typingIcon = 'icon-pause'
         else
           presenceStatus = 'here'
+          presenceIcon = 'icon-circle'
           typingStatus = 'none'
+          typingIcon = 'icon-pause'
 
       $users.append @template({
         name: displayName,
         admin: isAdmin,
-        avatarUrl: Kandan.Helpers.Avatars.urlFor(user, {size: 25})
+        avatarUrl: Kandan.Helpers.Avatars.urlFor(user, {size: 40})
         channelName: channelNames[channelId]
         channelId: channelId
         presenceStatus: presenceStatus
         typingStatus: typingStatus
+        presenceIcon: presenceIcon
+        typingIcon: typingIcon
       })
     $el.html($users)
     $el.find('.channel').bind 'click', ->
