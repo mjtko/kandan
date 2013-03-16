@@ -1,9 +1,12 @@
 #==============================================================================
-# Copyright (C) 2013
+# This file is part of Kandan.
+# https://github.com/kandanapp/kandan
 #
-# This file is part of 
-#
-# Some rights reserved, see LICENSE.txt.
+# Kandan's code and assets are dual-licensed. Kandan is available
+# generally under the AGPL, and also under a custom license via
+# special agreement. See LICENSE for the AGPL terms, and contact us
+# at <admin@kandanapp.com> if you're interested in development of
+# Kandan under a custom license.
 #==============================================================================
 class Ability
   include CanCan::Ability
@@ -13,10 +16,7 @@ class Ability
       can :manage, :all
     else
       can [:read, :create], Channel
-      # can :manage, Channel, :owner => user
-      # can [:read, :create], Activity
-      # can :read, Attachment
-      # can :manage, Attachment, :user => user
+      can :manage, Channel, :user => user
       can :manage, User, :id => user.id # can manage themselves
     end
     can :read, User
