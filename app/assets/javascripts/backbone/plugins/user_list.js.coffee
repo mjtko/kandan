@@ -6,8 +6,12 @@ class Kandan.Plugins.UserList
 
   @template: _.template '''
     <div class="user clearfix">
-      <img class="avatar" src="<%= avatarUrl %>"/>
-      <div class="x">
+      <div class="user-imagery">
+        <img class="avatar" src="<%= avatarUrl %>"/>
+        <div class="status typing <%= typingStatus %>"><i class="<%= typingIcon %>"></i></div>
+        <div class="status presence <%= presenceStatus %>"><i class="<%= presenceIcon %>"></i></div>
+      </div>
+      <div class="user-text">
         <div class="name">
           <%= name %>
           <% if(admin) { %>
@@ -16,8 +20,6 @@ class Kandan.Plugins.UserList
         </div>
         <a href="#channel-<%= channelId %>" class="channel"><%= channelName %></a>
       </div>
-      <div class="status typing <%= typingStatus %>"><i class="<%= typingIcon %>"></i></div>
-      <div class="status presence <%= presenceStatus %>"><i class="<%= presenceIcon %>"></i></div>
     </div>
   '''
 
