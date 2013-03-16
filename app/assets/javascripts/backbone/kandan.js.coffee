@@ -45,6 +45,7 @@ window.Kandan =
 
   registerAppEvents: ()->
     Kandan.Data.ActiveUsers.registerCallback "change", (data)->
+      return unless data.entity?
       Kandan.Helpers.Channels.addActivity({
         user: data.entity,
         action: data.event.split("#")[1]
@@ -58,11 +59,15 @@ window.Kandan =
       Kandan.Helpers.Utils.resetUnreadActivities()
       Kandan.Plugins.Notifications?.resetUnreadActivities()
       $(document).attr('title', 'Kandan')
+      Kandan.broadcaster.focussed()
     )
 
     $(window).blur(->
       Kandan.Helpers.Utils.browserTabFocused = false
+      Kandan.broadcaster.blurred()
     )
+
+    Kandan.Data.Channels.registerCallback "change", -> Kandan.broadcaster.focussed()
 
   initBroadcasterAndSubscribe: ()->
     Kandan.broadcaster = eval "new Kandan.Broadcasters.#{@options().broadcaster.name}Broadcaster()"

@@ -14,19 +14,22 @@ class Kandan.Helpers.Channels
 
   @pastAutoScrollThreshold: (channelId)->
     currentPosition     = @currentScrollPosition channelId
-    totalHeight         = $(document).height() - $(window).height()
+    totalHeight         = $(document).height() # - $(window).height()
     scrollPercentage    = (currentPosition) / (totalHeight)
     scrollPercentage > @options.autoScrollThreshold
 
   @scrollToLatestMessage: (channelId)->
     if channelId
       theScrollArea = $('#channels-'+channelId)
-      theScrollArea.scrollTop(theScrollArea.prop('scrollHeight'))
+      theScrollArea.animate {
+        scrollTop: theScrollArea.prop('scrollHeight')
+        easing: 'linear'
+      }, 2000
     else
       $('.channels-pane').scrollTop($('.channels-pane').prop('scrollHeight'))
 
   @currentScrollPosition: (channelId)->
-    $('channels-pane').scrollTop()
+    $('.channels-pane').scrollTop()
 
   @channelActivitiesEl: (channelId)->
     $("#channel-activities-#{channelId}")
@@ -135,7 +138,6 @@ class Kandan.Helpers.Channels
     belongsToCurrentUser = ( activityAttributes.user.id == Kandan.Data.Users.currentUser().id )
     activityExists       = ( $("#activity-#{activityAttributes.id}").length > 0 )
     local = local || false
-    console.log !local, !belongsToCurrentUser, !activityExists
 
     if local || (!local && !belongsToCurrentUser && !activityExists)
       @channelActivitiesEl(activityAttributes.channel_id)
@@ -162,7 +164,6 @@ class Kandan.Helpers.Channels
 
   @setPaginationState: (channelId, moreActivities, oldest)->
     @channelPaginationEl(channelId).data("oldest", oldest)
-    console.log "pagination element", moreActivities, @channelPaginationEl(channelId)
     if moreActivities == true
       @channelPaginationEl(channelId).show()
     else

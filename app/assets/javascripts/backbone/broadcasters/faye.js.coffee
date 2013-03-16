@@ -29,6 +29,39 @@ class Kandan.Broadcasters.FayeBroadcaster
       @processEventsForChannel(eventName, data)     if entityName == "channel"
       @processEventsForAttachments(eventName, data) if entityName == "attachments"
 
+  typingStarts: ->
+    @fayeClient.publish '/app/activities', {
+      event: "user#state:typingStarts"
+      extra: {}
+      userId: Kandan.Helpers.Users.currentUser().id
+      channelId: Kandan.Helpers.Channels.getActiveChannelId()
+    }
+
+  typingStops: (messagePresent) ->
+    eventName = if messagePresent then 'typingStopsPresent' else 'typingStops'
+    @fayeClient.publish '/app/activities', {
+      event: "user#state:#{eventName}"
+      extra: {}
+      userId: Kandan.Helpers.Users.currentUser().id
+      channelId: Kandan.Helpers.Channels.getActiveChannelId()
+    }
+
+  blurred: ->
+    @fayeClient.publish '/app/activities', {
+      event: "user#state:blurred"
+      extra: {}
+      userId: Kandan.Helpers.Users.currentUser().id
+      channelId: Kandan.Helpers.Channels.getActiveChannelId()
+    }
+
+  focussed: ->
+    @fayeClient.publish '/app/activities', {
+      event: "user#state:focussed"
+      extra: {}
+      userId: Kandan.Helpers.Users.currentUser().id
+      channelId: Kandan.Helpers.Channels.getActiveChannelId()
+    }
+
   processEventsForConnection: (eventName) ->
     Kandan.Helpers.Connection.setStatus(eventName)
     Kandan.Data.Connection.runCallbacks("softchange")
@@ -40,6 +73,19 @@ class Kandan.Broadcasters.FayeBroadcaster
   processEventsForUser: (eventName, data)->
     if eventName.match(/connect/)
       $(document).data('active-users', data.extra.active_users)
+      Kandan.Data.ActiveUsers.runCallbacks("change", data)
+    else if eventName.match(/state/)
+      $(document).data('user-states', {}) unless $(document).data('user-states')
+      $(document).data('user-channels', {}) unless $(document).data('user-channels')
+      state = switch(eventName)
+        when 'state:typingStarts' then 'typing'
+        when 'state:typingStops' then ''
+        when 'state:typingStopsPresent' then 'paused'
+        when 'state:blurred' then 'blurred'
+        when 'state:focussed' then 'here'
+      $(document).data('user-states')[data.userId] = state
+      $(document).data('user-channels')[data.userId] = data.channelId
+      data.extra.active_users = $(document).data('active-users')
       Kandan.Data.ActiveUsers.runCallbacks("change", data)
 
   processEventsForChannel: (eventName, data)->

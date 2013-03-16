@@ -33,6 +33,7 @@ class Kandan.Views.Chatbox extends Backbone.View
 
     $chatbox.val("")
 
+    Kandan.broadcaster.typingStops(false)
     activity.save({},{success: (model, response)->
       Kandan.Helpers.Channels.addActivity(
         _.extend(activity.toJSON(), {cid: activity.cid, user: Kandan.Data.Users.currentUser()}, created_at: new Date()),
@@ -53,13 +54,30 @@ class Kandan.Views.Chatbox extends Backbone.View
       connectionIcon = 'minus-sign'
     else
       connectionIcon = 'bolt'
-    $(@el).html @template {
+    $el = $(@el)
+    $el.html @template {
       connectionStatus: connectionStatus
       connectionIcon: connectionIcon
     }
-    $(@el).find('.chat-input').inputHistory {
+    $el.find('.chat-input').inputHistory {
       size: 20
     }
+    keyPressTimer = =>
+      if $el.find('.chat-input').val() == ''
+        Kandan.broadcaster.typingStops(false)
+        console.log 'typing stops, no message'
+      else
+        Kandan.broadcaster.typingStops(true)
+        console.log 'typing stops, message'
+      delete @_keyPressTimer
+
+    $el.bind 'keydown', =>
+      if @_keyPressTimer?
+        clearTimeout @_keyPressTimer
+      else
+        console.log 'typing starts'
+        Kandan.broadcaster.typingStarts()
+      @_keyPressTimer = setTimeout keyPressTimer, 2000
     @
 
   @updateChatStatus: (eventName) ->
