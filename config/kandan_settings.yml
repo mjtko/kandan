@@ -19,3 +19,6 @@
 
 :now_threshold: 3000
 :timestamp_refresh_interval: 2000
+
+# valid options: default, small, disabled
+:admin_badge_style: default

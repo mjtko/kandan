@@ -1,0 +1,22 @@
+<div class="user clearfix">
+  <div class="user-imagery">
+    <img class="avatar" src="<%= @avatarUrl %>"/>
+      <div title="<%= @status.typing.description %>" class="status typing <%= @status.typing.class %>"><i class="<%= @status.typing.icon %>"></i></div>
+      <div title="<%= @status.presence.description %>" class="status presence <%= @status.presence.class %>"><i class="<%= @status.presence.icon %>"></i></div>
+    </div>
+    <div class="user-text">
+      <div class="name">
+        <%= @name %>
+        <% if @isAdmin: %>
+	  <% if @badgeStyle == 'default': %>
+            &nbsp;<span class="badge badge-important">Admin</span>
+	  <% else if @badgeStyle == 'small': %>
+            &nbsp;<span class="badge badge-important" title="Admin">A</span>
+          <% end %>
+        <% end %>
+      </div>
+      <a href="#channel-<%= @channel.id %>" class="channel"><%= @channel.name %></a>
+    </div>
+  </div>
+</div>
+

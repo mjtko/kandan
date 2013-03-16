@@ -4,24 +4,21 @@ class Kandan.Plugins.UserList
   @widget_icon_url: "/assets/people_icon.png"
   @pluginNamespace: "Kandan.Plugins.UserList"
 
-  @template: _.template '''
-    <div class="user clearfix">
-      <div class="user-imagery">
-        <img class="avatar" src="<%= avatarUrl %>"/>
-        <div class="status typing <%= typingStatus %>"><i class="<%= typingIcon %>"></i></div>
-        <div class="status presence <%= presenceStatus %>"><i class="<%= presenceIcon %>"></i></div>
-      </div>
-      <div class="user-text">
-        <div class="name">
-          <%= name %>
-          <% if(admin) { %>
-            &nbsp;<span class="badge badge-important">Admin</span>
-          <% } %>
-        </div>
-        <a href="#channel-<%= channelId %>" class="channel"><%= channelName %></a>
-      </div>
-    </div>
-  '''
+  @template: JST['user_list_user']
+
+  @buildStatus: (presenceStatus, presenceIcon, typingStatus = 'none', typingIcon = 'pause') ->
+    {
+      presence: {
+        class: presenceStatus
+        description: if presenceStatus == 'here' then 'Here' else 'Away'
+        icon: "icon-#{presenceIcon}"
+      }
+      typing: {
+        class: typingStatus
+        description: if typingStatus == 'active' then 'Typing' else 'Paused'
+        icon: "icon-#{typingIcon}"
+      }
+    }
 
   @render: ($el)->
     $users = $("<div class='user_list'></div>")
@@ -38,44 +35,29 @@ class Kandan.Plugins.UserList
 
       channelId = $(document).data('user-channels')?[user.id] || 1
 
-      switch($(document).data('user-states')?[user.id])
+      status = switch($(document).data('user-states')?[user.id])
         when 'typing'
-          presenceStatus = 'here'
-          typingStatus = 'active'
-          presenceIcon = 'icon-circle'
-          typingIcon = 'icon-spin icon-spinner'
+          @buildStatus('here','circle','active','circle') #spin icon-spinner')
         when 'paused'
-          presenceStatus = 'here'
-          presenceIcon = 'icon-circle'
-          typingStatus = 'inactive'
-          typingIcon = 'icon-pause'
+          @buildStatus('here','circle','inactive','circle-blank')
         when 'here'
-          presenceStatus = 'here'
-          presenceIcon = 'icon-circle'
-          typingStatus = 'inactive'
-          typingIcon = 'icon-pause'
+          @buildStatus('here','circle')
         when 'blurred'
-          presenceStatus = 'idle'
-          presenceIcon = 'icon-circle-blank'
-          typingStatus = 'none'
-          typingIcon = 'icon-pause'
+          @buildStatus('idle','circle-blank')
         else
-          presenceStatus = 'here'
-          presenceIcon = 'icon-circle'
-          typingStatus = 'none'
-          typingIcon = 'icon-pause'
+          @buildStatus('here','circle')
 
-      $users.append @template({
+      $users.append @template {
         name: displayName,
-        admin: isAdmin,
+        isAdmin: isAdmin,
         avatarUrl: Kandan.Helpers.Avatars.urlFor(user, {size: 40})
-        channelName: channelNames[channelId]
-        channelId: channelId
-        presenceStatus: presenceStatus
-        typingStatus: typingStatus
-        presenceIcon: presenceIcon
-        typingIcon: typingIcon
-      })
+        badgeStyle: Kandan.options().admin_badge_style || 'default'
+        channel: {
+          name: channelNames[channelId]
+          id: channelId
+        }
+        status: status
+      }
     $el.html($users)
     $el.find('.channel').bind 'click', ->
       channelId = $(@).attr('href').split('-')[1]
