@@ -33,19 +33,22 @@ class Kandan.Plugins.UserList
       displayName ||= user.email # Revert to user email address if that's all we have
       isAdmin       = user.is_admin
 
-      channelId = $(document).data('user-channels')?[user.id] || 1
+      $(document).data('user-states', userStates = {}) unless userStates = $(document).data('user-states')
+      userStateData = userStates[user.id]
 
-      status = switch($(document).data('user-states')?[user.id])
-        when 'typing'
-          @buildStatus('here','circle','active','circle') #spin icon-spinner')
-        when 'paused'
-          @buildStatus('here','circle','inactive','circle-blank')
-        when 'here'
-          @buildStatus('here','circle')
-        when 'blurred'
-          @buildStatus('idle','circle-blank')
-        else
-          @buildStatus('here','circle')
+      channelId = userStateData?.channelId || 1
+      typingState = userStateData?.typing
+      presenceState = userStateData?.presence
+      status = if typingState == 'start'
+        @buildStatus('here','circle','active','circle') #spin icon-spinner')
+      else if presenceState == 'away'
+        @buildStatus('idle','circle-blank')
+      else if typingState == 'pause'
+        @buildStatus('here','circle','inactive','circle-blank')
+      else if presenceState == 'here'
+        @buildStatus('here','circle')
+      else
+        @buildStatus('here','circle')
 
       $users.append @template {
         name: displayName,
@@ -61,7 +64,6 @@ class Kandan.Plugins.UserList
     $el.html($users)
     $el.find('.channel').bind 'click', ->
       channelId = $(@).attr('href').split('-')[1]
-      console.log "switch to channel", channelId
       tab = Kandan.Helpers.Channels.getTabIndexByChannelId(channelId)
       $("#kandan").tabs("option", "selected", tab)
 

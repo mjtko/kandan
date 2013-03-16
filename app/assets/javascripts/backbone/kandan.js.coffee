@@ -153,6 +153,10 @@ window.Kandan =
       Kandan.Helpers.Channels.scrollToLatestMessage()
       Kandan.Plugins.Mentions.initUsersMentions(Kandan.Helpers.ActiveUsers.all())
       Kandan.Plugins.Emojis.attachToChatbox()
+      # We send a 'typingStops' event at initialization time to ensure
+      # that the typing flag is cleared on all clients (which can
+      # happen after a reload for eg.)
+      Kandan.broadcaster.typingStops()
 
     # Call the asynchronous initializers, passing the synchronous
     # initializer in as the callback to execute after all asynchrnous

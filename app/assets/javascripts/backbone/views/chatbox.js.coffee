@@ -64,18 +64,15 @@ class Kandan.Views.Chatbox extends Backbone.View
     }
     keyPressTimer = =>
       if $el.find('.chat-input').val() == ''
-        Kandan.broadcaster.typingStops(false)
-        console.log 'typing stops, no message'
+        Kandan.broadcaster.typingStops()
       else
-        Kandan.broadcaster.typingStops(true)
-        console.log 'typing stops, message'
+        Kandan.broadcaster.typingPauses()
       delete @_keyPressTimer
 
     $el.bind 'keydown', =>
       if @_keyPressTimer?
         clearTimeout @_keyPressTimer
       else
-        console.log 'typing starts'
         Kandan.broadcaster.typingStarts()
       @_keyPressTimer = setTimeout keyPressTimer, 1000
     @

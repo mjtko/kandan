@@ -29,34 +29,40 @@ class Kandan.Broadcasters.FayeBroadcaster
       @processEventsForChannel(eventName, data)     if entityName == "channel"
       @processEventsForAttachments(eventName, data) if entityName == "attachments"
 
-  typingStarts: ->
-    @fayeClient.publish '/app/activities', {
-      event: "user#state:typingStarts"
-      extra: {}
-      userId: Kandan.Helpers.Users.currentUser().id
-      channelId: Kandan.Helpers.Channels.getActiveChannelId()
-    }
+    @fayeClient.subscribe '/app/sync', (data)=>
+      if data == 'request'
+        # when we receive this message, we publish our current state information
+        # this includes:
+        #   1. presence state
+        #   2. typing state
+        #   3. current channel
+        $(document).data('user-states', userStates = {}) unless userStates = $(document).data('user-states')
+        userStateData = userStates[Kandan.Helpers.Users.currentUser().id]
+        typingState = userStateData?.typing || 'stop'
+        presenceState = userStateData?.presence || 'here'
+        if presenceState == 'away'
+          @blurred()
+        else if typingState == 'start'
+          @typingStarts()
+        else if typingState == 'pause'
+          @typingPauses()
+        else
+          @focussed()
 
-  typingStops: (messagePresent) ->
-    eventName = if messagePresent then 'typingStopsPresent' else 'typingStops'
-    @fayeClient.publish '/app/activities', {
-      event: "user#state:#{eventName}"
-      extra: {}
-      userId: Kandan.Helpers.Users.currentUser().id
-      channelId: Kandan.Helpers.Channels.getActiveChannelId()
-    }
+    @fayeClient.publish '/app/sync', 'request'
 
-  blurred: ->
-    @fayeClient.publish '/app/activities', {
-      event: "user#state:blurred"
-      extra: {}
-      userId: Kandan.Helpers.Users.currentUser().id
-      channelId: Kandan.Helpers.Channels.getActiveChannelId()
-    }
+  typingStarts: => @typingEvent('start')
+  typingStops: => @typingEvent('stop')
+  typingPauses: => @typingEvent('pause')
+  blurred: => @presenceEvent('away')
+  focussed: => @presenceEvent('here')
 
-  focussed: ->
+  typingEvent: (eventName) -> @publishUserEvent('typing', eventName)
+  presenceEvent: (eventName) -> @publishUserEvent('presence', eventName)
+
+  publishUserEvent: (eventType, eventName) ->
     @fayeClient.publish '/app/activities', {
-      event: "user#state:focussed"
+      event: "user##{eventType}:#{eventName}"
       extra: {}
       userId: Kandan.Helpers.Users.currentUser().id
       channelId: Kandan.Helpers.Channels.getActiveChannelId()
@@ -73,20 +79,16 @@ class Kandan.Broadcasters.FayeBroadcaster
   processEventsForUser: (eventName, data)->
     if eventName.match(/connect/)
       $(document).data('active-users', data.extra.active_users)
-      Kandan.Data.ActiveUsers.runCallbacks("change", data)
-    else if eventName.match(/state/)
-      $(document).data('user-states', {}) unless $(document).data('user-states')
-      $(document).data('user-channels', {}) unless $(document).data('user-channels')
-      state = switch(eventName)
-        when 'state:typingStarts' then 'typing'
-        when 'state:typingStops' then ''
-        when 'state:typingStopsPresent' then 'paused'
-        when 'state:blurred' then 'blurred'
-        when 'state:focussed' then 'here'
-      $(document).data('user-states')[data.userId] = state
-      $(document).data('user-channels')[data.userId] = data.channelId
+    else if eventName.match(/presence/) or eventName.match(/typing/)
+      $(document).data('user-states', userStates = {}) unless userStates = $(document).data('user-states')
+      [stateType, state] = eventName.split(':')
+      userStateData = userStates[data.userId] ?= {}
+      userStateData.channelId = data.channelId
+      userStateData[stateType] = state
       data.extra.active_users = $(document).data('active-users')
-      Kandan.Data.ActiveUsers.runCallbacks("change", data)
+    else
+      return
+    Kandan.Data.ActiveUsers.runCallbacks("change", data)
 
   processEventsForChannel: (eventName, data)->
     Kandan.Helpers.Channels.deleteChannelById(data.entity.id) if eventName == "delete"
