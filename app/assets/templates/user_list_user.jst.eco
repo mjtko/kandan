@@ -16,6 +16,7 @@
         <% end %>
       </div>
       <a href="#channel-<%= @channel.id %>" class="channel"><%= @channel.name %></a>
+      <span class="posted_at last-seen-at user-<%= @userId %> relative-timestamp <%= if new Date().getTime() - new Date(@atime) < 30000 then 'under-threshold' %>" title="<%= @atime %>"><%= @atime.toRelativeTime(Kandan.options().now_threshold) %></span>
     </div>
   </div>
 </div>

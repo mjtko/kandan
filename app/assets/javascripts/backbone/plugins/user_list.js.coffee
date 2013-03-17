@@ -39,6 +39,7 @@ class Kandan.Plugins.UserList
       channelId = userStateData?.channelId || 1
       typingState = userStateData?.typing
       presenceState = userStateData?.presence
+
       status = if typingState == 'start'
         @buildStatus('here','circle','active','circle') #spin icon-spinner')
       else if presenceState == 'away'
@@ -49,10 +50,10 @@ class Kandan.Plugins.UserList
         @buildStatus('here','circle')
       else
         @buildStatus('here','circle')
-
       $users.append @template {
-        name: displayName,
-        isAdmin: isAdmin,
+        userId: user.id
+        name: displayName
+        isAdmin: isAdmin
         avatarUrl: Kandan.Helpers.Avatars.urlFor(user, {size: 40})
         badgeStyle: Kandan.options().admin_badge_style || 'default'
         channel: {
@@ -60,8 +61,18 @@ class Kandan.Plugins.UserList
           id: channelId
         }
         status: status
+        atime: userStateData?.atime || new Date()
       }
     $el.html($users)
+
+    # iterate again, as we can only set up timestamps after the
+    # elements have been added to the DOM.
+    for user in Kandan.Data.ActiveUsers.all()
+      atime = userStates[user.id]?.atime || new Date()
+      $lastSeenEl = $el.find(".last-seen-at.user-#{user.id}")
+      $lastSeenEl.data("timestamp", atime)
+      $lastSeenEl.data("timestamp-threshold", 30000)
+
     $el.find('.channel').bind 'click', ->
       channelId = $(@).attr('href').split('-')[1]
       tab = Kandan.Helpers.Channels.getTabIndexByChannelId(channelId)

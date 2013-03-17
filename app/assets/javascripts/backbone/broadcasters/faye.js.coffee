@@ -30,14 +30,15 @@ class Kandan.Broadcasters.FayeBroadcaster
       @processEventsForAttachments(eventName, data) if entityName == "attachments"
 
     @fayeClient.subscribe '/app/sync', (data)=>
+      $(document).data('user-states', userStates = {}) unless userStates = $(document).data('user-states')
       if data == 'request'
         # when we receive this message, we publish our current state information
         # this includes:
         #   1. presence state
         #   2. typing state
         #   3. current channel
-        $(document).data('user-states', userStates = {}) unless userStates = $(document).data('user-states')
-        userStateData = userStates[Kandan.Helpers.Users.currentUser().id]
+        currentUserId = Kandan.Helpers.Users.currentUser().id
+        userStateData = userStates[currentUserId]
         typingState = userStateData?.typing || 'stop'
         presenceState = userStateData?.presence || 'here'
         if presenceState == 'away'
@@ -48,7 +49,14 @@ class Kandan.Broadcasters.FayeBroadcaster
           @typingPauses()
         else
           @focussed()
-
+        @fayeClient.publish '/app/sync', {
+          atime: (userStateData?.atime || new Date()).getTime()
+          userId: currentUserId
+        }
+      else
+        userStates[data.userId].atime ?= new Date(data.atime)
+        data.extra = { active_users: $(document).data('active-users') }
+        Kandan.Data.ActiveUsers.runCallbacks("change", data)
     @fayeClient.publish '/app/sync', 'request'
 
   typingStarts: => @typingEvent('start')
@@ -77,6 +85,7 @@ class Kandan.Broadcasters.FayeBroadcaster
     Kandan.Data.Attachments.runCallbacks("change", data)
 
   processEventsForUser: (eventName, data)->
+    $(document).data('user-atimes', {}) unless $(document).data('user-atimes')
     if eventName.match(/connect/)
       $(document).data('active-users', data.extra.active_users)
     else if eventName.match(/presence/) or eventName.match(/typing/)
@@ -85,6 +94,10 @@ class Kandan.Broadcasters.FayeBroadcaster
       userStateData = userStates[data.userId] ?= {}
       userStateData.channelId = data.channelId
       userStateData[stateType] = state
+      # typing start or triggering focus of the window ('here') cause
+      # the access time to be updated
+      if state == 'start' || state == 'here'
+        userStateData.atime = new Date()
       data.extra.active_users = $(document).data('active-users')
     else
       return

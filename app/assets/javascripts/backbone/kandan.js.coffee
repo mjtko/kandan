@@ -132,8 +132,13 @@ window.Kandan =
 
   registerUtilityEvents: ()->
     window.setInterval(=>
-      for el in $(".posted_at")
+      for el in $(".relative-timestamp")
         $(el).text (new Date($(el).data("timestamp"))).toRelativeTime(@options().now_threshold)
+        if thresh = $(el).data('timestamp-threshold')
+          if new Date().getTime() - $(el).data("timestamp") <= thresh
+            $(el).addClass('under-threshold')
+          else
+            $(el).removeClass('under-threshold')
     , @options().timestamp_refresh_interval)
 
   init: ->
