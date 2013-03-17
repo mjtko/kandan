@@ -67,7 +67,7 @@ window.Kandan =
       Kandan.broadcaster.blurred()
     )
 
-    Kandan.Data.Channels.registerCallback "change", -> Kandan.broadcaster.focussed()
+    Kandan.Data.Channels.registerCallback "change", -> Kandan.broadcaster.switchedChannel()
 
   initBroadcasterAndSubscribe: ()->
     Kandan.broadcaster = eval "new Kandan.Broadcasters.#{@options().broadcaster.name}Broadcaster()"

@@ -37,6 +37,7 @@ class Kandan.Plugins.UserList
       userStateData = userStates[user.id]
 
       channelId = userStateData?.channelId || 1
+      channelName = channelNames[channelId]
       typingState = userStateData?.typing
       presenceState = userStateData?.presence
 
@@ -57,7 +58,7 @@ class Kandan.Plugins.UserList
         avatarUrl: Kandan.Helpers.Avatars.urlFor(user, {size: 40})
         badgeStyle: Kandan.options().admin_badge_style || 'default'
         channel: {
-          name: channelNames[channelId]
+          name: "#{channelName.substring(0,12)}#{if channelName.length > 12 then '...' else ''}"
           id: channelId
         }
         status: status

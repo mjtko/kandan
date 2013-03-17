@@ -65,6 +65,19 @@ class Kandan.Broadcasters.FayeBroadcaster
   blurred: => @presenceEvent('away')
   focussed: => @presenceEvent('here')
 
+  # This must first test to see if the user is away - if away, we
+  # resend 'blurred' with the channel update, otherwise we resend
+  # 'focussed' with the channel update.
+  switchedChannel: =>
+    $(document).data('user-states', userStates = {}) unless userStates = $(document).data('user-states')
+    currentUserId = Kandan.Helpers.Users.currentUser().id
+    userStateData = userStates[currentUserId]
+    presenceState = userStateData?.presence || 'here'
+    if presenceState == 'away'
+      @blurred()
+    else
+      @focussed()
+
   typingEvent: (eventName) -> @publishUserEvent('typing', eventName)
   presenceEvent: (eventName) -> @publishUserEvent('presence', eventName)
 
@@ -104,11 +117,14 @@ class Kandan.Broadcasters.FayeBroadcaster
     Kandan.Data.ActiveUsers.runCallbacks("change", data)
 
   processEventsForChannel: (eventName, data)->
-    Kandan.Helpers.Channels.deleteChannelById(data.entity.id) if eventName == "delete"
-    Kandan.Helpers.Channels.createChannelIfNotExists(channel: data.entity, channel_id: data.entity.id) if eventName == "create"
-
-    # TODO this has to be implemented
-    Kandan.Helpers.Channels.renameChannelById(data.entity.id, data.entity.name) if data.eventName == "update"
+    if eventName == "delete"
+      Kandan.Helpers.Channels.deleteChannelById(data.entity.id)
+    else if eventName == "create"
+      Kandan.Helpers.Channels.createChannelIfNotExists(channel: data.entity, channel_id: data.entity.id)
+      Kandan.Helpers.Channels.all().unshift(data.entity)
+    else if eventName == 'update'
+      # TODO this has to be implemented
+      Kandan.Helpers.Channels.renameChannelById(data.entity.id, data.entity.name)
 
 
   subscribe: (channel)->
