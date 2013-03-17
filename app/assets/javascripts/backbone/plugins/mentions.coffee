@@ -15,13 +15,14 @@ class Kandan.Plugins.Mentions
     Kandan.Data.Users.registerCallback "change", (data)=>
       @initAvailableUsers(data.extra.users)
 
-    Kandan.Modifiers.register @options.regex, (message, state) =>
-      for mention in message.content.match(@options.regex)
+    Kandan.Modifiers.register @options.regex, (message, activity) =>
+      for mention in message.match(@options.regex)
+        console.log @allUsers
         if mention in @allUsers
           replacement = @options.template({mention: mention})
-          message.content = message.content.replace(mention, replacement)
+          message = message.replace(mention, replacement)
 
-      return Kandan.Helpers.Activities.buildFromMessageTemplate(message)
+      return message
 
   @initAvailableUsers: (users)=>
     @allUsers =  ("@#{u.username}" for u in users)
