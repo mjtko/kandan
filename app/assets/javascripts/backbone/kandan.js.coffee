@@ -152,12 +152,13 @@ window.Kandan =
     syncInitializer = @callAfter asyncInitializers.length, =>
       @registerPlugins()
       Kandan.Plugins.initAll()
+      Kandan.Plugins.Mentions.initAvailableUsers(Kandan.Helpers.Users.all())
       @initChatArea(Kandan.Helpers.Channels.getCollection())
       @initTabs()
       Kandan.Widgets.initAll()
       Kandan.Helpers.Channels.scrollToLatestMessage()
-      Kandan.Plugins.Mentions.initUsersMentions(Kandan.Helpers.ActiveUsers.all())
       Kandan.Plugins.Emojis.attachToChatbox()
+      @initBroadcasterAndSubscribe()
       # We send a 'typingStops' event at initialization time to ensure
       # that the typing flag is cleared on all clients (which can
       # happen after a reload for eg.)
@@ -171,7 +172,6 @@ window.Kandan =
     # The following intiialization routines don't require deferred
     # initialization and can be executed immediately.
     @registerUtilityEvents()
-    @initBroadcasterAndSubscribe()
     @registerAppEvents()
 
   # Create a function that is fired only after it has been attempted
