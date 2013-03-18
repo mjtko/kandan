@@ -17,7 +17,6 @@ class Kandan.Plugins.Mentions
 
     Kandan.Modifiers.register @options.regex, (message, activity) =>
       for mention in message.match(@options.regex)
-        console.log @allUsers
         if mention in @allUsers
           replacement = @options.template({mention: mention})
           message = message.replace(mention, replacement)
